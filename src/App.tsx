@@ -18,7 +18,7 @@ function App() {
     
     <>
             <BrowserRouter>
-            <Navbar/>
+            <NavLink exact to="/login">Login</NavLink>
        
 
                 <Switch>
