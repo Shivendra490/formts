@@ -18,7 +18,7 @@ function App() {
     
     <>
             <BrowserRouter>
-            <NavLink exact to="/login">Login</NavLink>
+            <Navbar/>
        
 
                 <Switch>
@@ -33,8 +33,7 @@ function App() {
 
 
 
-{/* <Form/> 
-<Login/> */}
+
       
     </>
     

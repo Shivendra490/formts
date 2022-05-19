@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, Grid, Paper } from "@mui/material";
+import { Alert, Avatar, Grid, Paper } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -18,7 +18,6 @@ type userList = {
   phone: string;
   gender: string;
   password: string;
-  
 }[];
 
 // type inputProps={
@@ -29,14 +28,14 @@ type userList = {
 //   handleClick:(e:React.ChangeEvent<HTMLInputElement>)=>void
 // }
 
-interface inputUser  {
+interface inputUser {
   name: string;
   email: string;
   phone: string;
   gender: string;
   password: string;
-  cpassword:string
-};
+  cpassword: string;
+}
 
 const paperStyle = {
   width: "30%",
@@ -50,8 +49,7 @@ const avatarStyle = {
 };
 
 const Form = () => {
-  const [allUsersList, setAllUsersList] = useState<userList>([])
- 
+  const [allUsersList, setAllUsersList] = useState<userList>([]);
 
   const [input, setInput] = useState<inputUser>({
     name: "",
@@ -59,13 +57,41 @@ const Form = () => {
     phone: "",
     gender: "",
     password: "",
-    cpassword:""
+    cpassword: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name,value} = e.target;
-    setInput({ ...input, [name]: value });
+  const [error, setError] = useState<inputUser>({
+    name: "",
+    email: "",
+    phone: "",
+    gender: "",
+    password: "",
+    cpassword: "",
+  });
+
+  const validate = (name: string, value: string) => {
+    switch (name) {
+      case "name":
+        if (value.trim().length < 5) return "name less than 5 chars";
+        else {return ""}
+       
+    }
+
     
+    
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    // call validation function
+    // send name of the field
+    // if false return error else nothing
+    const result = validate(name, value);
+    
+      setError({ ...error, [name]: result });
+    
+
+    setInput({ ...input, [name]: value });
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -81,18 +107,33 @@ const Form = () => {
     // .catch((error) => console.log(error));
 
     setAllUsersList([...allUsersList, newUser]);
-    
-    setInput({ name: "", email: "", phone: "", gender: "", password: "" ,cpassword:""});
+
+    setInput({
+      name: "",
+      email: "",
+      phone: "",
+      gender: "",
+      password: "",
+      cpassword: "",
+    });
+  };
+
+  const checkDisable = () => {
+    const keys = Object.keys(input);
+    const check =
+      keys.every((key) => input[key as keyof inputUser] !== "") &&
+      keys.some((key) => error[key as keyof inputUser] === "");
+    return check;
   };
   // localStorage.setItem('userListssssNew',JSON.stringify(allUsersList))
   console.log(allUsersList, "eeeee");
-
+  console.log(error.name,'ihfsfsjfjslkjfsiljilsk')
   return (
     <Grid>
       <Paper elevation={10} style={paperStyle}>
         <Grid
           display="flex"
-          flexDirection={'column'}
+          flexDirection={"column"}
           // justifyContent={"space-around"}
           alignItems={"center"}
         >
@@ -120,6 +161,10 @@ const Form = () => {
             style={{ margin: "1% 0" }}
             onChange={handleChange}
           />
+          <div style={{ width: "100%" }}>
+
+            {error.name && <Alert severity="error">{error.name}</Alert>}
+          </div>
           <TextField
             id="email"
             name="email"
@@ -181,7 +226,7 @@ const Form = () => {
             id="cpassword"
             label="Confirm Password"
             variant="outlined"
-            name='cpassword'
+            name="cpassword"
             fullWidth
             value={input.cpassword}
             style={{ margin: "1% 0" }}
@@ -193,6 +238,7 @@ const Form = () => {
             onClick={handleClick}
             variant="contained"
             style={{ margin: "1% 0" }}
+            disabled={checkDisable()}
           >
             Register
           </Button>
