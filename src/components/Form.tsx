@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Avatar, Grid, Paper } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import Box from "@mui/material/Box";
@@ -12,11 +12,15 @@ import FormLabel from "@mui/material/FormLabel";
 
 import Button from "@mui/material/Button";
 
+
+
+
+
 type userList = {
   name: string;
   email: string;
   phone: string;
-  gender: string;
+  gender?: string;
   password: string;
 }[];
 
@@ -32,9 +36,9 @@ interface inputUser {
   name: string;
   email: string;
   phone: string;
-  gender: string;
+  gender?: string;
   password: string;
-  cpassword: string;
+  cpassword?: string;
 }
 
 const paperStyle = {
@@ -50,6 +54,7 @@ const avatarStyle = {
 
 const Form = () => {
   const [allUsersList, setAllUsersList] = useState<userList>([]);
+  const [isDisabled,setIsDisabled]=useState<boolean>(true)
 
   const [input, setInput] = useState<inputUser>({
     name: "",
@@ -69,13 +74,57 @@ const Form = () => {
     cpassword: "",
   });
 
+  useEffect(() => {
+    setIsDisabled(checkDisable())
+  
+   
+  }, [error,input])
+  
+
   const validate = (name: string, value: string) => {
     switch (name) {
       case "name":
-        if (value.trim().length < 5) return "name less than 5 chars";
-        else {return ""}
+        if (value.trim().length <5) return "name less than 5 chars";
+        break;
+      case "email":
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+       if(!re.test(value)){
+         return "Please enter valid email"
+       }
+       break;
+      case "phone":{
+        const re=/^[7-9][0-9]{9}$/
+
+        if(!re.test(value)){
+          return "please enter phone number"
+        }
+
+
+      }
+      break;
+      case "password":
+        if(value.length<8){
+          return "password should be greater than 8 chars"
+        }
+        break
+      case "cpassword":
+        if(value!==input.password)
+        {
+          return "password and confirm password not matches"
+        }
+      break;
+      case "gender":
+        if(value.length>1)
+        {
+          return "required"
+        }
+       
+        
+
+      
        
     }
+    return
 
     
     
@@ -97,14 +146,23 @@ const Form = () => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const newUser = { ...input };
+    console.log("new user before ",newUser)
 
-    // fetch(`http://localhost:8080/reg`, {
-    //   body: JSON.stringify(newUser),
-    //   method: "post",
-    //   headers: { "Content-Type": "application/json" },// header is optional
-    // })
-    // .then((response) => response)//response.data
-    // .catch((error) => console.log(error));
+    delete newUser.cpassword;
+    delete newUser.gender
+    console.log("new user after ",newUser)
+
+    fetch(`https://sample-register.herokuapp.com/register`, {
+      body: JSON.stringify(newUser),
+      method: "post",
+      headers: { "Content-Type": "application/json" },// header is optional
+    })
+    .then((response) => console.log(response,typeof response))//response.data
+    .catch((error) => console.log(error));
+
+    // fetch(`https://sample-register.herokuapp.com/users`).then(response=>console.log(response,'hello')).then(abc=>console.log(abc,"abc"))
+
+    
 
     setAllUsersList([...allUsersList, newUser]);
 
@@ -120,14 +178,21 @@ const Form = () => {
 
   const checkDisable = () => {
     const keys = Object.keys(input);
-    const check =
-      keys.every((key) => input[key as keyof inputUser] !== "") &&
-      keys.some((key) => error[key as keyof inputUser] === "");
-    return check;
+     let check=true
+    if(keys.some((key) => input[key as keyof inputUser] =="")||
+    keys.some((key) => error[key as keyof inputUser] !== "")) {return true}
+    else if(
+      keys.every((key) => input[key as keyof inputUser] !="")&&
+    keys.every((key) => error[key as keyof inputUser] == "")
+    ){return false}
+      
+      
+      // console.log(check,'checking')
+    return true;
+    
   };
   // localStorage.setItem('userListssssNew',JSON.stringify(allUsersList))
-  console.log(allUsersList, "eeeee");
-  console.log(error.name,'ihfsfsjfjslkjfsiljilsk')
+ 
   return (
     <Grid>
       <Paper elevation={10} style={paperStyle}>
@@ -162,7 +227,6 @@ const Form = () => {
             onChange={handleChange}
           />
           <div style={{ width: "100%" }}>
-
             {error.name && <Alert severity="error">{error.name}</Alert>}
           </div>
           <TextField
@@ -175,6 +239,9 @@ const Form = () => {
             style={{ margin: "1% 0" }}
             onChange={handleChange}
           />
+          <div style={{ width: "100%" }}>
+            {error.email && <Alert severity="error">{error.email}</Alert>}
+          </div>
           <TextField
             id="phone"
             name="phone"
@@ -185,6 +252,9 @@ const Form = () => {
             style={{ margin: "1% 0" }}
             onChange={handleChange}
           />
+          <div style={{ width: "100%" }}>
+            {error.phone && <Alert severity="error">{error.phone}</Alert>}
+          </div>
 
           <FormControl>
             <FormLabel
@@ -214,6 +284,7 @@ const Form = () => {
 
           <TextField
             id="password"
+            type='password'
             label="Password"
             variant="outlined"
             name="password"
@@ -222,8 +293,12 @@ const Form = () => {
             style={{ margin: "1% 0" }}
             onChange={handleChange}
           />
+           <div style={{ width: "100%" }}>
+            {error.password && <Alert severity="error">{error.password}</Alert>}
+          </div>
           <TextField
             id="cpassword"
+            type='password'
             label="Confirm Password"
             variant="outlined"
             name="cpassword"
@@ -231,14 +306,19 @@ const Form = () => {
             value={input.cpassword}
             style={{ margin: "1% 0" }}
             onChange={handleChange}
+            required
           />
+          <div style={{ width: "100%" }}>
+            {error.cpassword && <Alert severity="error">{error.cpassword}</Alert>}
+          </div>
           <Button
             type="submit"
             value={input.cpassword}
             onClick={handleClick}
             variant="contained"
             style={{ margin: "1% 0" }}
-            disabled={checkDisable()}
+            disabled={false}
+          
           >
             Register
           </Button>

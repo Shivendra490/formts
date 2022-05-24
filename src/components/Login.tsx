@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Avatar, Button, Grid, Paper } from '@mui/material'
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import Box from '@mui/material/Box';
@@ -18,7 +18,48 @@ const avatarStyle = {
     marginTop: "3%",
   };
 
+  interface loginDetails{
+    email:string
+    password:string
+  }
+
 const Login = () => {
+  const [loginCred, setLoginCred] = useState<loginDetails>({email:"",password:""})
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    // call validation function
+    // send name of the field
+    // if false return error else nothing
+
+    // const result = validate(name, value);
+    
+      // setError({ ...error, [name]: result });
+    
+
+    setLoginCred({ ...loginCred, [name]: value });
+  };
+
+  const handleSubmit=(e: React.MouseEvent<HTMLButtonElement>)=>{
+    e.preventDefault()
+    const currCred={...loginCred}
+
+    fetch(`https://sample-register.herokuapp.com/login`, {
+      body: JSON.stringify(currCred),
+      method: "post",
+      headers: { "Content-Type": "application/json" },// header is optional
+    })
+    .then((response) => response.json())
+    .then(data=>console.log(data))//response.data
+    .catch(error => console.log(error));
+
+
+  }
+
+  
+
+ 
+
   return (
    <Grid>
        <Paper elevation={10} style={PaperStyle}>
@@ -27,7 +68,7 @@ const Login = () => {
           justifyContent={"space-around"}
           alignContent={"center"}
         >
-          <h2>Login</h2>
+          <h2 style={{marginTop:'0.7em'}}>Login</h2>
           <Avatar style={avatarStyle}>
             <AddOutlinedIcon />
           </Avatar>
@@ -40,13 +81,15 @@ const Login = () => {
       noValidate
       autoComplete="off"
     >
-      <TextField id="outlined-basic" label="Email" variant="outlined" style={{margin:'2% 0'}}/>
-      <TextField id="outlined-basic" label="Password" variant="outlined" />
+      <TextField name="email" id="outlined-basic" label="Email" variant="outlined" onChange={handleChange} style={{margin:'2% 0'}}/>
+      <TextField name="password" id="outlined-basic" label="Password" variant="outlined" onChange={handleChange}/>
       <Button
             type="submit"
-            // onClick={handleClick}
+            
             variant="contained"
             style={{ margin: "1% 0" }}
+            onClick={handleSubmit}
+            
           >
             Login
           </Button>
