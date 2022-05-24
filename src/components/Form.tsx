@@ -37,6 +37,8 @@ interface inputUser {
   cpassword?: string;
 }
 
+const keys = ["name", "email", "phone", "gender", "password", "cpassword"];
+
 const paperStyle = {
   width: "30%",
   margin: "3% auto",
@@ -71,7 +73,6 @@ const Form = () => {
   });
 
   useEffect(() => {
-    const keys = Object.keys(input);
     const checkDisable =
       keys.some((key) => input[key as keyof inputUser] === "") ||
       keys.some((key) => error[key as keyof inputUser] !== undefined);
