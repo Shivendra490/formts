@@ -143,22 +143,47 @@ const Form = () => {
     setInput({ ...input, [name]: value });
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async(e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const newUser = { ...input };
-    console.log("new user before ",newUser)
+    console.log("new user before ",input)
 
-    delete newUser.cpassword;
-    delete newUser.gender
+     delete newUser.cpassword;
+    // delete newUser.gender
     console.log("new user after ",newUser)
 
-    fetch(`https://sample-register.herokuapp.com/register`, {
+    // fetch(`https://sample-register.herokuapp.com/register`, {
+    //   body: JSON.stringify(newUser),
+    //   method: "post",
+    //   headers: { "Content-Type": "application/json" },// header is optional
+    // })
+    // .then((response) => console.log(response,typeof response))//response.data
+    // .catch((error) => console.log(error));
+
+    try{
+    const response= await fetch(`https://sample-register.herokuapp.com/register`, {
       body: JSON.stringify(newUser),
       method: "post",
       headers: { "Content-Type": "application/json" },// header is optional
     })
-    .then((response) => console.log(response,typeof response))//response.data
-    .catch((error) => console.log(error));
+
+    const data=await response.json()
+
+    if(data){
+console.log()
+    }
+    if(response){
+      console.log("hello")
+    }
+
+  }
+  catch(error){
+      console.log(error)
+  }
+    
+
+
+
 
     // fetch(`https://sample-register.herokuapp.com/users`).then(response=>console.log(response,'hello')).then(abc=>console.log(abc,"abc"))
 
