@@ -12,10 +12,6 @@ import FormLabel from "@mui/material/FormLabel";
 
 import Button from "@mui/material/Button";
 
-
-
-
-
 type userList = {
   name: string;
   email: string;
@@ -41,6 +37,8 @@ interface inputUser {
   cpassword?: string;
 }
 
+const keys = ["name", "email", "phone", "gender", "password", "cpassword"];
+
 const paperStyle = {
   width: "30%",
   margin: "3% auto",
@@ -54,7 +52,7 @@ const avatarStyle = {
 
 const Form = () => {
   const [allUsersList, setAllUsersList] = useState<userList>([]);
-  const [isDisabled,setIsDisabled]=useState<boolean>(true)
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   const [input, setInput] = useState<inputUser>({
     name: "",
@@ -75,70 +73,62 @@ const Form = () => {
   });
 
   useEffect(() => {
-    setIsDisabled(checkDisable())
-  
-   
-  }, [error,input])
-  
+    const checkDisable =
+      keys.some((key) => input[key as keyof inputUser] === "") ||
+      keys.some((key) => error[key as keyof inputUser] !== undefined);
+
+    setIsDisabled(checkDisable);
+  }, [error, input]);
 
   const validate = (name: string, value: string) => {
     switch (name) {
       case "name":
-        if (value.trim().length <5) return "name less than 5 chars";
+        if (value.trim().length < 5) return "name less than 5 chars";
         break;
       case "email":
-        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-       if(!re.test(value)){
-         return "Please enter valid email"
-       }
-       break;
-      case "phone":{
-        const re=/^[7-9][0-9]{9}$/
-
-        if(!re.test(value)){
-          return "please enter phone number"
+        const re =
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!re.test(value)) {
+          return "Please enter valid email";
         }
+        break;
+      case "phone":
+        {
+          const re = /^[7-9][0-9]{9}$/;
 
-
-      }
-      break;
+          if (!re.test(value)) {
+            return "please enter phone number";
+          }
+        }
+        break;
       case "password":
-        if(value.length<8){
-          return "password should be greater than 8 chars"
+        if (value.length < 8) {
+          return "password should be greater than 8 chars";
         }
-        break
+        break;
       case "cpassword":
-        if(value!==input.password)
-        {
-          return "password and confirm password not matches"
+        if (value !== input.password) {
+          return "password and confirm password not matches";
         }
-      break;
+        break;
       case "gender":
-        if(value.length>1)
-        {
-          return "required"
+        if (value === "") {
+          return "required";
         }
-       
-        
-
-      
-       
+        break;
     }
-    return
-
-    
-    
+    return;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     // call validation function
     // send name of the field
     // if false return error else nothing
     const result = validate(name, value);
-    
-      setError({ ...error, [name]: result });
-    
+
+    setError({ ...error, [name]: result });
 
     setInput({ ...input, [name]: value });
   };
@@ -146,6 +136,7 @@ const Form = () => {
   const handleClick = async(e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const newUser = { ...input };
+
     console.log("new user before ",input)
 
      delete newUser.cpassword;
@@ -164,8 +155,9 @@ const Form = () => {
     const response= await fetch(`https://sample-register.herokuapp.com/register`, {
       body: JSON.stringify(newUser),
       method: "post",
-      headers: { "Content-Type": "application/json" },// header is optional
+      headers: { "Content-Type": "application/json" }, // header is optional
     })
+
 
     const data=await response.json()
 
@@ -181,13 +173,7 @@ console.log()
       console.log(error)
   }
     
-
-
-
-
     // fetch(`https://sample-register.herokuapp.com/users`).then(response=>console.log(response,'hello')).then(abc=>console.log(abc,"abc"))
-
-    
 
     setAllUsersList([...allUsersList, newUser]);
 
@@ -201,23 +187,6 @@ console.log()
     });
   };
 
-  const checkDisable = () => {
-    const keys = Object.keys(input);
-     let check=true
-    if(keys.some((key) => input[key as keyof inputUser] =="")||
-    keys.some((key) => error[key as keyof inputUser] !== "")) {return true}
-    else if(
-      keys.every((key) => input[key as keyof inputUser] !="")&&
-    keys.every((key) => error[key as keyof inputUser] == "")
-    ){return false}
-      
-      
-      // console.log(check,'checking')
-    return true;
-    
-  };
-  // localStorage.setItem('userListssssNew',JSON.stringify(allUsersList))
- 
   return (
     <Grid>
       <Paper elevation={10} style={paperStyle}>
@@ -309,7 +278,7 @@ console.log()
 
           <TextField
             id="password"
-            type='password'
+            type="password"
             label="Password"
             variant="outlined"
             name="password"
@@ -318,12 +287,12 @@ console.log()
             style={{ margin: "1% 0" }}
             onChange={handleChange}
           />
-           <div style={{ width: "100%" }}>
+          <div style={{ width: "100%" }}>
             {error.password && <Alert severity="error">{error.password}</Alert>}
           </div>
           <TextField
             id="cpassword"
-            type='password'
+            type="password"
             label="Confirm Password"
             variant="outlined"
             name="cpassword"
@@ -334,7 +303,9 @@ console.log()
             required
           />
           <div style={{ width: "100%" }}>
-            {error.cpassword && <Alert severity="error">{error.cpassword}</Alert>}
+            {error.cpassword && (
+              <Alert severity="error">{error.cpassword}</Alert>
+            )}
           </div>
           <Button
             type="submit"
@@ -342,8 +313,7 @@ console.log()
             onClick={handleClick}
             variant="contained"
             style={{ margin: "1% 0" }}
-            disabled={false}
-          
+            disabled={isDisabled}
           >
             Register
           </Button>
