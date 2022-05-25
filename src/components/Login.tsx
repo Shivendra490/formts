@@ -3,9 +3,7 @@ import { Alert, Avatar, Button, Grid, Paper } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-
-import { Redirect, useHistory } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 const PaperStyle = {
   width: "30%",
   margin: "3% auto",
@@ -30,7 +28,8 @@ const Login = () => {
     password: "",
   });
 
-  const history = useHistory();
+  const history = useNavigate();
+
   const [error, setError] = useState<loginDetails>({ email: "", password: "" });
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
@@ -87,9 +86,9 @@ const Login = () => {
       );
       const data = await response.json();
       if (data && data.status === "success") {
-        history.push("/fnsdjkfnsdkjfjksd");
+        history("/welcome");
+        setLoginCred({ email: "", password: "" });
       }
-      setLoginCred({ email: "", password: "" });
     } catch (error) {
       console.log(error);
     }
