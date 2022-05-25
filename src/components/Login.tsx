@@ -4,7 +4,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
 const PaperStyle = {
   width: "30%",
@@ -30,6 +30,7 @@ const Login = () => {
     password: "",
   });
 
+  const history = useHistory();
   const [error, setError] = useState<loginDetails>({ email: "", password: "" });
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
@@ -74,46 +75,24 @@ const Login = () => {
   };
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setIsDisabled(true)
-    const currCred = { ...loginCred };
-
-    // fetch(`https://sample-register.herokuapp.com/login`, {
-    //   body: JSON.stringify(currCred),
-    //   method: "post",
-    //   headers: { "Content-Type": "application/json" },// header is optional
-    // })
-    // .then((response) => response.json())
-    // .then(data=>console.log(data))//response.data
-    // .catch(error => console.log(error));
-
     try {
+      setIsDisabled(true);
       const response = await fetch(
         `https://sample-register.herokuapp.com/login`,
         {
-          body: JSON.stringify(currCred),
+          body: JSON.stringify(loginCred),
           method: "post",
           headers: { "Content-Type": "application/json" }, // header is optional
         }
       );
-
       const data = await response.json();
-      if(data){
-        setIsDisabled(false)
+      if (data && data.status === "success") {
+        history.push("/fnsdjkfnsdkjfjksd");
       }
-
-      if (data.status==="success") {
-        console.log('inside data.status')
-        return <Redirect to="./Welcome"/>
-      }
-      if (response) {
-        console.log("hello");
-      }
+      setLoginCred({ email: "", password: "" });
     } catch (error) {
       console.log(error);
     }
-
-    setLoginCred({ email: " ", password: " " });
   };
 
   return (
@@ -144,6 +123,7 @@ const Login = () => {
             variant="outlined"
             onChange={handleChange}
             style={{ margin: "2% 0" }}
+            value={loginCred.email}
           />
           <div style={{ width: "100%" }}>
             {error.email && <Alert severity="error">{error.email}</Alert>}
@@ -154,6 +134,7 @@ const Login = () => {
             label="Password"
             variant="outlined"
             onChange={handleChange}
+            value={loginCred.password}
           />
           <div style={{ width: "100%" }}>
             {error.password && <Alert severity="error">{error.password}</Alert>}
