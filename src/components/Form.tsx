@@ -53,6 +53,7 @@ const avatarStyle = {
 const Form = () => {
   const [allUsersList, setAllUsersList] = useState<userList>([]);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [isSignedUp, setIsSignedUp] = useState<string|null|React.ReactNode>()
 
   const [input, setInput] = useState<inputUser>({
     name: "",
@@ -76,7 +77,8 @@ const Form = () => {
     const checkDisable =
       keys.some((key) => input[key as keyof inputUser] === "") ||
       keys.some((key) => error[key as keyof inputUser] !== undefined);
-
+    setTimeout(()=>setIsSignedUp(""),2000)
+    setIsSignedUp("")
     setIsDisabled(checkDisable);
   }, [error, input]);
 
@@ -133,15 +135,16 @@ const Form = () => {
     setInput({ ...input, [name]: value });
   };
 
-  const handleClick = async(e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    setIsDisabled(true);
     const newUser = { ...input };
 
-    console.log("new user before ",input)
+    console.log("new user before ", input);
 
-     delete newUser.cpassword;
+    delete newUser.cpassword;
     // delete newUser.gender
-    console.log("new user after ",newUser)
+    console.log("new user after ", newUser);
 
     // fetch(`https://sample-register.herokuapp.com/register`, {
     //   body: JSON.stringify(newUser),
@@ -151,31 +154,44 @@ const Form = () => {
     // .then((response) => console.log(response,typeof response))//response.data
     // .catch((error) => console.log(error));
 
-    try{
-    const response= await fetch(`https://sample-register.herokuapp.com/register`, {
-      body: JSON.stringify(newUser),
-      method: "post",
-      headers: { "Content-Type": "application/json" }, // header is optional
-    })
+    try {
+      const response = await fetch(
+        `https://sample-register.herokuapp.com/register`,
+        {
+          body: JSON.stringify(newUser),
+          method: "post",
+          headers: { "Content-Type": "application/json" }, // header is optional
+        }
+      );
 
+      const data = await response.json();
 
-    const data=await response.json()
-
-    if(data){
-console.log()
+      if (data) {
+        console.log(data.status, "inside form ts");
+        let res=""
+        if(Object.keys(data).length>1)
+        {
+          res="user already exist."
+          
+        }
+        else{
+          res="Account created."
+        }
+        setIsSignedUp(res)
+        // const res=data.data.msg || data.status
+        console.log(res,"this is res")
+        setIsDisabled(false);
+      }
+      if (response) {
+        console.log("hello");
+      }
+    } catch (error) {
+      console.log(error);
     }
-    if(response){
-      console.log("hello")
-    }
 
-  }
-  catch(error){
-      console.log(error)
-  }
-    
     // fetch(`https://sample-register.herokuapp.com/users`).then(response=>console.log(response,'hello')).then(abc=>console.log(abc,"abc"))
 
-    setAllUsersList([...allUsersList, newUser]);
+    // setAllUsersList([...allUsersList, newUser]); for frontend console.
 
     setInput({
       name: "",
@@ -210,6 +226,9 @@ console.log()
           noValidate
           autoComplete="off"
         >
+          <div style={{ width: "100%" }}>
+            {isSignedUp && <Alert severity="success">{isSignedUp}</Alert>}
+          </div>
           <TextField
             id="name"
             name="name"

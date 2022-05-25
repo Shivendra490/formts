@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Link, Switch, useHistory, NavLink} from "react-ro
 import Form from './components/Form';
 import Login from './components/Login';
 import Navbar from './components/Navbar';
+import Welcome from './components/Welcome';
 
 
 
@@ -23,7 +24,8 @@ function App() {
 
                 <Switch>
                     <Route exact path="/" component={Form}/>
-                    <Route path="/login" component={Login}/>
+                    <Route exact path="/login" component={Login}/>
+                    <Route exact path="/welcome" component={Welcome}/>
                 </Switch>
             </BrowserRouter>
       
