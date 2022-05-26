@@ -3,9 +3,7 @@ import { Alert, Avatar, Button, Grid, Paper } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-
 import { useNavigate } from "react-router-dom";
-
 const PaperStyle = {
   width: "30%",
   margin: "3% auto",
@@ -43,8 +41,6 @@ const Login = () => {
     setIsDisabled(checkDisable);
   }, [error, loginCred]);
 
-  const history=useHistory()
-
   const validate = (name: string, value: string) => {
     switch (name) {
       case "email":
@@ -78,12 +74,8 @@ const Login = () => {
   };
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-
-
-
     try {
       setIsDisabled(true);
-
       const response = await fetch(
         `https://sample-register.herokuapp.com/login`,
         {
@@ -93,21 +85,13 @@ const Login = () => {
         }
       );
       const data = await response.json();
-
-
       if (data && data.status === "success") {
         history("/welcome");
         setLoginCred({ email: "", password: "" });
-
       }
     } catch (error) {
       console.log(error);
     }
-
-    
-
-    
-
   };
 
   return (
