@@ -7,3 +7,21 @@
 .main-wrapper{
     
 }
+
+/* .MuiPpaper-root{
+    width:30%;
+    background-color: aqua;
+} */
+.paperStyle{
+    width: 30%;
+    margin: 3% auto;
+  };
+
+
+
+@media only screen and (max-width:480px){
+    .paperStyle{
+        width:100%;
+        border:5px solid black;
+    }
+}

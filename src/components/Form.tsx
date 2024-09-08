@@ -9,8 +9,10 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
+import './Form.css'
 
 import Button from "@mui/material/Button";
+import Navbar from "./Navbar";
 
 type userList = {
   name: string;
@@ -39,10 +41,10 @@ interface inputUser {
 
 const keys = ["name", "email", "phone", "gender", "password", "cpassword"];
 
-const paperStyle = {
-  width: "30%",
-  margin: "3% auto",
-};
+// const paperStyle = {
+//   width: "30%",
+//   margin: "3% auto",
+// };
 
 const avatarStyle = {
   backGroundColor: "red",
@@ -146,7 +148,7 @@ const Form = () => {
     // delete newUser.gender
     console.log("new user after ", newUser);
 
-    // fetch(`https://sample-register.herokuapp.com/register`, {
+    // fetch(`https://sample-register.herokuapp.com/register`, {onChange
     //   body: JSON.stringify(newUser),
     //   method: "post",
     //   headers: { "Content-Type": "application/json" },// header is optional
@@ -204,8 +206,11 @@ const Form = () => {
   };
 
   return (
+    <>
+    <Navbar/>
+    
     <Grid>
-      <Paper elevation={10} style={paperStyle}>
+      <div className="paperStyle" >
         <Grid
           display="flex"
           flexDirection={"column"}
@@ -328,7 +333,7 @@ const Form = () => {
           </div>
           <Button
             type="submit"
-            value={input.cpassword}
+            
             onClick={handleClick}
             variant="contained"
             style={{ margin: "1% 0" }}
@@ -337,8 +342,9 @@ const Form = () => {
             Register
           </Button>
         </Box>
-      </Paper>
+      </div>
     </Grid>
+    </>
   );
 };
 
