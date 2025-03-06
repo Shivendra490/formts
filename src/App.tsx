@@ -4,15 +4,22 @@ import Form from "./components/Form";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Welcome from "./components/Welcome";
+import HomePlan from "./components/HomePlan";
+import HomeNav from "./components/HomNav";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+      
+      
       <Routes>
-        <Route path="/welcome" element={<Welcome />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/" element={<Form />} />
+        <Route  path="/login" element={<Login />} />
+        <Route path="/homeplan" element={<HomePlan />} />
+        {/* <Route><HomePlan /></Route> */}
+      
+        
+        
       </Routes>
     </BrowserRouter>
   );

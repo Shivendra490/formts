@@ -4,6 +4,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 const PaperStyle = {
   width: "30%",
   margin: "3% auto",
@@ -86,7 +87,9 @@ const Login = () => {
       );
       const data = await response.json();
       if (data && data.status === "success") {
-        history("/welcome");
+         localStorage.setItem("tokenKey",data.data.token)
+        //  console.log(data.data.name,data.data.token)
+        history("/homeplan");
         setLoginCred({ email: "", password: "" });
       }
     } catch (error) {
@@ -95,6 +98,8 @@ const Login = () => {
   };
 
   return (
+    <>
+    <Navbar/>
     <Grid>
       <Paper elevation={10} style={PaperStyle}>
         <Grid
@@ -150,6 +155,7 @@ const Login = () => {
         </Box>
       </Paper>
     </Grid>
+    </>
   );
 };
 

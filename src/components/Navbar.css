@@ -4,11 +4,12 @@
 
 .header-wrapper{
     display:flex;
-    background-color: black;
+    background-color: rgb(167, 98, 167);
     gap:1em;
     height:2em;
     align-items: center;
     padding:1em;
+    justify-content: space-between;
 }
 
 a{
